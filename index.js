@@ -63,7 +63,31 @@ app.get('/submittedAssignments', async(req,res)=>{
   res.send(result)
 })
 
+//get single submitted assignment data
+app.get('/submittedAssignments/:id',async(req,res)=>{
+  const id = req.params.id;
+  const query = {_id:new ObjectId(id)}
+  const result = await submittedAssignmentCollection.findOne(query);
+  res.send(result);
+})
 
+//assess single submitted assignment data
+app.put('/submittedAssignments/:id',async(req,res)=>{
+  const id=req.params.id;
+  const filter = {_id: new ObjectId(id)}
+  const currentAssignment =req.body;
+  const options ={upsert:true}
+  // console.log(currentAssignment)
+  const updatedAssignment ={
+    $set:{
+      obtainedMark:currentAssignment.obtainedMark,
+      feedback:currentAssignment.feedback,
+      status:currentAssignment.status
+    }
+  }
+  const result =await submittedAssignmentCollection.updateOne(filter,updatedAssignment,options)
+  res.send(result)
+})
 
 //delete assignment data
 app.delete('/assignments/:id',async(req,res)=>{
@@ -73,7 +97,7 @@ app.delete('/assignments/:id',async(req,res)=>{
   res.send(result);
 })
 
-//get single travel data
+//get single assignment data
 app.get('/assignments/:id',async(req,res)=>{
   const id = req.params.id;
   const query ={_id:new ObjectId(id)}

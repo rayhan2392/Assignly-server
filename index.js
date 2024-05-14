@@ -29,6 +29,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const assignmentDataCollection =client.db('assignlyDB').collection('assignmentDB')
+    const submittedAssignmentCollection =client.db('assignlyDB').collection('submittedAssignment')
     // Connect the client to the server	(optional starting in v4.7)
     // await client.connect();
 //post assignment data created by user 
@@ -39,6 +40,13 @@ app.post('/assignments', async(req,res)=>{
   res.send(result)
    
 })
+//post submitted data submitted by user
+app.post('/submittedAssignments',async(req,res)=>{
+  const submittedAssignment = req.body;
+  console.log(submittedAssignment);
+  const result = await submittedAssignmentCollection.insertOne(submittedAssignment);
+  res.send(result);
+})
 
 //get all assignment data
 app.get('/assignments',async(req,res)=>{
@@ -46,6 +54,16 @@ app.get('/assignments',async(req,res)=>{
   const result =await cursor.toArray();
   res.send(result);
 })
+
+
+//get all submitted assignment data
+app.get('/submittedAssignments', async(req,res)=>{
+  const cursor = submittedAssignmentCollection.find();
+  const result = await cursor.toArray();
+  res.send(result)
+})
+
+
 
 //delete assignment data
 app.delete('/assignments/:id',async(req,res)=>{
